@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="referrer" content="no-referrer">
+<title>Imad AI – نهدرو بالدارجة</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="هم.html">
+<style>
+:root{
+  --a1:#b91c1c; --a2:#f59e0b; --cloth:#1f2937; --hat:#111827;
+  --bg:#05060a; --glass:rgba(255,255,255,.06); --stroke:rgba(255,255,255,.12);
+  --txt:#eef1ff; --mut:#9aa3c7;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{margin:0;font-family:'Tajawal',system-ui,sans-serif;color:var(--txt);background:var(--bg);overflow:hidden}
+.bg{position:fixed;inset:0;z-index:0;overflow:hidden}
+.bg i{position:absolute;border-radius:50%;filter:blur(90px);opacity:.45;animation:float 18s ease-in-out infinite}
+.bg i:nth-child(1){width:420px;height:420px;background:var(--a1);top:-120px;right:-80px;transition:background .6s}
+.bg i:nth-child(2){width:380px;height:380px;background:var(--a2);bottom:-140px;left:-80px;animation-delay:-6s;transition:background .6s}
+.bg i:nth-child(3){width:260px;height:260px;background:#7f1d1d;top:40%;left:38%;opacity:.22;animation-delay:-11s}
+@keyframes float{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(40px,-30px) scale(1.12)}}
+.grain{position:fixed;inset:0;z-index:0;pointer-events:none;background-image:radial-gradient(rgba(255,255,255,.05) 1px,transparent 1px);background-size:3px 3px;opacity:.5}
+
+.app{position:relative;z-index:1;height:100dvh;padding:18px;display:grid;grid-template-columns:minmax(340px,430px) 1fr;gap:18px}
+.panel{background:var(--glass);border:1px solid var(--stroke);border-radius:28px;backdrop-filter:blur(22px) saturate(140%);-webkit-backdrop-filter:blur(22px) saturate(140%);box-shadow:0 20px 60px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.08);display:flex;flex-direction:column;min-height:0;overflow:hidden}
+
+.stage{padding:16px 16px 18px;align-items:center}
+.top{width:100%;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.badge{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--mut);background:rgba(255,255,255,.07);padding:7px 14px;border-radius:99px;border:1px solid var(--stroke);white-space:nowrap}
+.dot{width:8px;height:8px;border-radius:50%;background:#34d399;box-shadow:0 0 10px #34d399;animation:pulse 2s infinite}
+.stage.speaking .dot{background:#fbbf24;box-shadow:0 0 12px #fbbf24}
+.stage.listening .dot{background:#f87171;box-shadow:0 0 12px #f87171}
+@keyframes pulse{50%{opacity:.4}}
+.tools{display:flex;gap:6px}
+.icon{min-width:38px;height:38px;padding:0 8px;border-radius:13px;border:1px solid var(--stroke);background:rgba(255,255,255,.07);color:var(--txt);font:inherit;font-size:16px;cursor:pointer;transition:.2s}
+.icon:hover{background:rgba(255,255,255,.18);transform:translateY(-2px)}
+.icon.on{background:linear-gradient(135deg,var(--a1),var(--a2));border-color:transparent}
+.icon.db{font-size:13px;font-weight:700;color:var(--a2)}
+.avwrap{position:relative;flex:1;min-height:0;width:100%;display:grid;place-items:center;margin-top:4px}
+.ring{position:absolute;width:min(78%,340px);aspect-ratio:1;border-radius:50%;background:conic-gradient(from 0deg,var(--a1),var(--a2),#7f1d1d,var(--a1));filter:blur(38px);opacity:.38;transition:opacity .4s,transform .4s;animation:spin 10s linear infinite}
+.stage.speaking .ring{opacity:.7;transform:scale(1.12)}
+.stage.listening .ring{opacity:.8;transform:scale(1.18);filter:blur(30px) hue-rotate(30deg)}
+@keyframes spin{to{transform:rotate(360deg)}}
+#av{position:relative;height:100%;max-height:560px;width:auto;max-width:100%;filter:drop-shadow(0 18px 30px rgba(0,0,0,.55))}
+.bars{display:flex;gap:5px;align-items:flex-end;height:26px;margin:6px 0 2px}
+.bars span{width:5px;height:24px;border-radius:4px;background:linear-gradient(var(--a2),var(--a1));transform:scaleY(.12);transform-origin:bottom;transition:transform .06s}
+.who{text-align:center}
+.who h1{margin:2px 0 0;font-size:28px;font-weight:800;letter-spacing:.5px;background:linear-gradient(90deg,var(--a2),#fff,var(--a1));-webkit-background-clip:text;background-clip:text;color:transparent}
+.who p{margin:2px 0 0;color:var(--mut);font-size:13.5px}
+.themes{display:flex;gap:10px;margin-top:10px}
+.themes button{width:26px;height:26px;border-radius:50%;border:2px solid transparent;cursor:pointer;transition:.25s;outline:none}
+.themes button.on{border-color:#fff;transform:scale(1.18)}
+
+.chat{padding:0}
+.chat-h{padding:14px 22px;border-bottom:1px solid var(--stroke);display:flex;align-items:center;justify-content:space-between;gap:10px}
+.chat-h b{font-size:16px}
+.chat-h small{color:var(--mut);font-size:12.5px;text-align:left}
+.msgs{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:12px;scroll-behavior:smooth}
+.msgs::-webkit-scrollbar{width:6px}.msgs::-webkit-scrollbar-thumb{background:rgba(255,255,255,.18);border-radius:9px}
+.m{max-width:82%;padding:12px 16px;border-radius:20px;line-height:1.75;font-size:15.5px;animation:pop .35s cubic-bezier(.2,1.2,.4,1);position:relative;word-wrap:break-word;white-space:pre-line}
+@keyframes pop{from{opacity:0;transform:translateY(10px) scale(.96)}}
+.m.bot{align-self:flex-start;background:rgba(255,255,255,.09);border:1px solid var(--stroke);border-top-right-radius:6px}
+.m.user{align-self:flex-end;background:linear-gradient(135deg,var(--a1),var(--a2));color:#fff;border-top-left-radius:6px;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+.m .rp{margin-inline-start:8px;border:0;background:rgba(255,255,255,.12);color:inherit;border-radius:10px;padding:2px 8px;cursor:pointer;font-size:13px;vertical-align:middle}
+.m .rp:hover{background:rgba(255,255,255,.25)}
+.typing{align-self:flex-start;display:flex;gap:5px;padding:14px 18px;background:rgba(255,255,255,.09);border:1px solid var(--stroke);border-radius:20px;border-top-right-radius:6px}
+.typing i{width:8px;height:8px;border-radius:50%;background:var(--a2);animation:bounce 1s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes bounce{0%,60%,100%{transform:translateY(0);opacity:.5}30%{transform:translateY(-6px);opacity:1}}
+.chips{display:flex;gap:8px;padding:0 20px 12px;overflow-x:auto;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chips button{flex:none;border:1px solid var(--stroke);background:rgba(255,255,255,.07);color:var(--txt);padding:8px 14px;border-radius:99px;font:inherit;font-size:14px;cursor:pointer;transition:.2s;white-space:nowrap}
+.chips button:hover{background:linear-gradient(135deg,var(--a1),var(--a2));transform:translateY(-2px);border-color:transparent}
+.composer{display:flex;gap:10px;padding:14px 16px 16px;border-top:1px solid var(--stroke);align-items:center}
+.composer input{flex:1;min-width:0;height:50px;border-radius:18px;border:1px solid var(--stroke);background:rgba(255,255,255,.07);color:var(--txt);padding:0 18px;font:inherit;font-size:16px;outline:none;transition:.2s}
+.composer input:focus{border-color:var(--a2);box-shadow:0 0 0 4px rgba(245,158,11,.15)}
+.composer input::placeholder{color:#7f89b0}
+.cbtn{width:50px;height:50px;flex:none;border-radius:18px;border:0;font-size:20px;cursor:pointer;color:#fff;transition:.2s}
+.cbtn.send{background:linear-gradient(135deg,var(--a1),var(--a2));box-shadow:0 8px 22px rgba(0,0,0,.3)}
+.cbtn.send:hover{transform:translateY(-2px) scale(1.04)}
+.cbtn.mic{background:rgba(255,255,255,.1);border:1px solid var(--stroke)}
+.cbtn.mic.rec{background:#ef4444;animation:recp 1.2s infinite}
+@keyframes recp{0%{box-shadow:0 0 0 0 rgba(239,68,68,.6)}100%{box-shadow:0 0 0 16px rgba(239,68,68,0)}}
+
+.start{position:fixed;inset:0;z-index:10;display:grid;place-items:center;background:rgba(5,6,10,.7);backdrop-filter:blur(10px);padding:20px;transition:.5s}
+.start.hide{opacity:0;pointer-events:none}
+.card{width:min(440px,100%);background:rgba(20,20,28,.9);border:1px solid var(--stroke);border-radius:28px;padding:28px;text-align:center;box-shadow:0 30px 80px rgba(0,0,0,.6)}
+.card h2{margin:0 0 8px;font-size:24px}
+.card p{color:var(--mut);line-height:1.8;margin:0 0 18px}
+.big{border:0;border-radius:18px;padding:14px 30px;font:inherit;font-size:17px;font-weight:700;color:#fff;cursor:pointer;background:linear-gradient(135deg,var(--a1),var(--a2));box-shadow:0 12px 30px rgba(0,0,0,.35);transition:.2s}
+.big:hover{transform:translateY(-3px) scale(1.03)}
+.toast{position:fixed;bottom:24px;left:50%;transform:translate(-50%,30px);background:#161b36;border:1px solid var(--stroke);padding:12px 20px;border-radius:14px;opacity:0;transition:.35s;z-index:20;pointer-events:none;font-size:14px;max-width:90vw;text-align:center}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+
+@media (max-width:860px){
+  .app{grid-template-columns:1fr;grid-template-rows:minmax(0,42dvh) minmax(0,1fr);padding:10px;gap:10px}
+  .stage{padding:10px}
+  .who p,.themes,.bars{display:none}
+  .who h1{font-size:20px}
+  .chat-h{padding:10px 16px}
+  .chat-h small{display:none}
+  .m{font-size:15px;max-width:90%}
+  .badge{padding:6px 10px;font-size:12px}
+  .icon{min-width:34px;height:34px;font-size:15px}
+}
+</style>
+</head>
+<body>
+<div class="bg"><i></i><i></i><i></i></div><div class="grain"></div>
+
+<main class="app">
+  <section class="panel stage" id="stage">
+    <div class="top">
+      <div class="badge"><span class="dot"></span><span id="status">متصلة</span></div>
+      <div class="tools">
+        <button class="icon" id="bMute" title="تشغيل / إيقاف الصوت" aria-label="الصوت">🔊</button>
+        <button class="icon" id="bVoice" title="تغيير الصوت" aria-label="تغيير الصوت">🎙️</button>
+        <button class="icon" id="bRate" title="سرعة الكلام" aria-label="السرعة">1×</button>
+        <button class="icon" id="bHat" title="قبعة / بدون" aria-label="قبعة">🎩</button>
+        <a class="icon db" href="database.html" target="_blank" title="قاعدة البيانات" aria-label="قاعدة البيانات">🗄️</a>
+      </div>
+    </div>
+
+    <div class="avwrap">
+      <div class="ring"></div>
+      <svg id="av" viewBox="0 0 400 520" xmlns="http://www.w3.org/2000/svg" aria-label="وجه Imad">
+        <defs>
+          <radialGradient id="skin" cx="50%" cy="38%" r="70%">
+            <stop offset="0" stop-color="#e8b98e"/><stop offset=".55" stop-color="#cf9a6b"/><stop offset="1" stop-color="#a86f45"/>
+          </radialGradient>
+          <linearGradient id="sideShade" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#4a2a15" stop-opacity=".35"/><stop offset=".22" stop-color="#4a2a15" stop-opacity="0"/>
+            <stop offset=".78" stop-color="#4a2a15" stop-opacity="0"/><stop offset="1" stop-color="#4a2a15" stop-opacity=".35"/>
+          </linearGradient>
+          <linearGradient id="shade" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#3a1f0d" stop-opacity=".3"/>
+          </linearGradient>
+          <linearGradient id="hairG" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#1a120c"/><stop offset=".5" stop-color="#0d0906"/><stop offset="1" stop-color="#000"/>
+          </linearGradient>
+          <linearGradient id="hShade" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#000" stop-opacity=".35"/><stop offset=".25" stop-color="#fff" stop-opacity=".05"/>
+            <stop offset=".6" stop-color="#000" stop-opacity=".06"/><stop offset="1" stop-color="#000" stop-opacity=".38"/>
+          </linearGradient>
+          <radialGradient id="eyeW" cx="50%" cy="45%" r="60%">
+            <stop offset=".55" stop-color="#f5efe9"/><stop offset="1" stop-color="#d8cfc6"/>
+          </radialGradient>
+          <radialGradient id="irisG" cx="42%" cy="36%" r="75%">
+            <stop offset="0" stop-color="#7a5a3a"/><stop offset=".55" stop-color="#3d2614"/><stop offset="1" stop-color="#120803"/>
+          </radialGradient>
+          <linearGradient id="upG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7a2a35"/><stop offset="1" stop-color="#5e1d26"/></linearGradient>
+          <linearGradient id="lowG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9a3a48"/><stop offset="1" stop-color="#7a2532"/></linearGradient>
+          <linearGradient id="hatG" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#2a2a30"/><stop offset="1" stop-color="#0e0e12"/>
+          </linearGradient>
+          <linearGradient id="hatBand" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#b91c1c"/><stop offset="1" stop-color="#7f1d1d"/>
+          </linearGradient>
+          <filter id="b6" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="6"/></filter>
+          <filter id="b3" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.6"/></filter>
+          <filter id="b1" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="1.2"/></filter>
+          <clipPath id="clipEL"><ellipse cx="150" cy="218" rx="25" ry="13"/></clipPath>
+          <clipPath id="clipER"><ellipse cx="250" cy="218" rx="25" ry="13"/></clipPath>
+          <clipPath id="clipMouth"><path id="mouthClip" d=""/></clipPath>
+        </defs>
+
+        <g id="body">
+          <rect x="170" y="330" width="60" height="92" rx="22" fill="#b98a63"/>
+          <ellipse cx="200" cy="378" rx="50" ry="17" fill="#3a2010" opacity=".45" filter="url(#b6)"/>
+          <path d="M20,520 C30,430 115,402 200,402 C285,402 370,430 380,520 Z" style="fill:var(--cloth);transition:fill .5s"/>
+          <path d="M20,520 C30,430 115,402 200,402 C285,402 370,430 380,520 Z" fill="url(#hShade)" opacity=".6"/>
+          <path d="M178,404 L200,470 L222,404 Z" fill="#e8e8ee"/>
+          <path d="M196,410 L204,410 L206,470 L200,482 L194,470 Z" fill="#b91c1c"/>
+          <path d="M196,410 L204,410 L202,424 L198,424 Z" fill="#7f1d1d"/>
+          <path d="M160,404 L200,430 L240,404 L232,398 L200,418 L168,398 Z" fill="#0e0e12"/>
+        </g>
+
+        <g id="head">
+          <g id="hairBack">
+            <path d="M92,232 C80,120 138,64 200,64 C262,64 320,120 308,232 C312,270 310,300 302,320 L98,320 C90,300 88,270 92,232Z" fill="url(#hairG)"/>
+          </g>
+          <g id="ears">
+            <ellipse cx="98" cy="256" rx="11" ry="19" fill="#c9946a"/><ellipse cx="302" cy="256" rx="11" ry="19" fill="#c9946a"/>
+            <path d="M96,250 Q100,256 96,264" stroke="#8a5a34" stroke-width="1.4" fill="none" opacity=".6"/>
+            <path d="M304,250 Q300,256 304,264" stroke="#8a5a34" stroke-width="1.4" fill="none" opacity=".6"/>
+          </g>
+          <path id="face" d="M97,230 C97,150 145,118 200,118 C255,118 303,150 303,230 C303,300 262,372 200,377 C138,372 97,300 97,230Z" fill="url(#skin)"/>
+          <path d="M97,230 C97,150 145,118 200,118 C255,118 303,150 303,230 C303,300 262,372 200,377 C138,372 97,300 97,230Z" fill="url(#sideShade)"/>
+          <path d="M97,230 C97,150 145,118 200,118 C255,118 303,150 303,230 C303,300 262,372 200,377 C138,372 97,300 97,230Z" fill="url(#shade)" opacity=".6"/>
+
+          <ellipse cx="128" cy="270" rx="20" ry="15" fill="#5b2b8a" opacity=".35" filter="url(#b3)"/>
+          <ellipse cx="126" cy="268" rx="12" ry="9" fill="#7c2d9c" opacity=".28" filter="url(#b1)"/>
+          <path d="M262,180 L274,192 M268,178 L282,190" stroke="#7a1f1f" stroke-width="2.4" stroke-linecap="round" opacity=".85"/>
+          <path d="M262,180 L274,192 M268,178 L282,190" stroke="#c0392b" stroke-width="1" stroke-linecap="round" opacity=".55"/>
+          <ellipse cx="258" cy="160" rx="16" ry="11" fill="#4a1a6a" opacity=".3" filter="url(#b3)"/>
+          <path d="M272,285 L282,298" stroke="#8a1f1f" stroke-width="2" stroke-linecap="round" opacity=".8"/>
+          <ellipse cx="200" cy="345" rx="30" ry="6" fill="#5e1d26" opacity=".25" filter="url(#b3)"/>
+
+          <g id="eyeL">
+            <ellipse cx="150" cy="218" rx="25" ry="13" fill="url(#eyeW)"/>
+            <g clip-path="url(#clipEL)">
+              <g class="iris">
+                <circle r="12" cx="150" cy="218" fill="url(#irisG)" stroke="#0e0603" stroke-width="1.4"/>
+                <circle r="5.5" cx="150" cy="218" fill="#050201"/>
+                <circle r="2.8" cx="145.5" cy="213.5" fill="#fff"/>
+                <circle r="1.4" cx="155.5" cy="222.5" fill="#fff" opacity=".7"/>
+              </g>
+              <ellipse cx="150" cy="206" rx="26" ry="5" fill="#000" opacity=".14" filter="url(#b3)"/>
+              <g class="lid"><rect x="116" y="168" width="68" height="32" fill="#d6a377"/><path d="M118,200 Q150,209 182,200" stroke="#2a170d" stroke-width="2.6" fill="none"/></g>
+            </g>
+            <ellipse cx="150" cy="226" rx="24" ry="10" fill="#4a1a6a" opacity=".28" filter="url(#b3)"/>
+            <path d="M124,219 C128,201 172,201 176,219" stroke="#0d0906" stroke-width="4" fill="none" stroke-linecap="round"/>
+            <path d="M125,217 l-8,-3 M129,210 l-7,-5 M137,205 l-5,-6" stroke="#0d0906" stroke-width="2.4" stroke-linecap="round"/>
+          </g>
+          <g id="eyeR">
+            <ellipse cx="250" cy="218" rx="25" ry="13" fill="url(#eyeW)"/>
+            <g clip-path="url(#clipER)">
+              <g class="iris">
+                <circle r="12" cx="250" cy="218" fill="url(#irisG)" stroke="#0e0603" stroke-width="1.4"/>
+                <circle r="5.5" cx="250" cy="218" fill="#050201"/>
+                <circle r="2.8" cx="245.5" cy="213.5" fill="#fff"/>
+                <circle r="1.4" cx="255.5" cy="222.5" fill="#fff" opacity=".7"/>
+              </g>
+              <ellipse cx="250" cy="206" rx="26" ry="5" fill="#000" opacity=".14" filter="url(#b3)"/>
+              <g class="lid"><rect x="216" y="168" width="68" height="32" fill="#d6a377"/><path d="M218,200 Q250,209 282,200" stroke="#2a170d" stroke-width="2.6" fill="none"/></g>
+            </g>
+            <path d="M224,219 C228,201 272,201 276,219" stroke="#0d0906" stroke-width="4" fill="none" stroke-linecap="round"/>
+            <path d="M275,217 l8,-3 M271,210 l7,-5 M263,205 l5,-6" stroke="#0d0906" stroke-width="2.4" stroke-linecap="round"/>
+          </g>
+
+          <path id="browL" d="M116,196 C130,180 162,170 186,184 C188,188 187,192 183,192 C160,184 132,190 120,200 C117,200 115,198 116,196Z" fill="#0d0906"/>
+          <path id="browR" d="M284,196 C270,180 238,170 214,184 C212,188 213,192 217,192 C240,184 268,190 280,200 C283,200 285,198 284,196Z" fill="#0d0906"/>
+
+          <path d="M190,232 C186,252 184,270 190,283" stroke="#8a5535" stroke-width="5" fill="none" opacity=".18" filter="url(#b3)" stroke-linecap="round"/>
+          <path d="M197,246 C195,266 187,278 193,285 Q200,291 207,285 C213,278 205,266 203,246" stroke="#a86f45" stroke-width="2.6" fill="none" stroke-linecap="round" opacity=".8"/>
+          <ellipse cx="200" cy="276" rx="5.5" ry="3.2" fill="#fff" opacity=".22" filter="url(#b3)"/>
+          <ellipse cx="194" cy="286" rx="2.8" ry="1.9" fill="#5a3020" opacity=".6"/><ellipse cx="206" cy="286" rx="2.8" ry="1.9" fill="#5a3020" opacity=".6"/>
+
+          <g id="mouth">
+            <path id="mIn" d="" fill="#2a0810"/>
+            <g clip-path="url(#clipMouth)">
+              <rect id="teeth" x="150" y="325" width="100" height="14" rx="5" fill="#f5f0e8"/>
+              <ellipse id="tongue" cx="200" cy="340" rx="24" ry="12" fill="#b04a5a"/>
+            </g>
+            <path id="lowL" d="" fill="url(#lowG)"/>
+            <ellipse id="lipHi" cx="200" cy="341" rx="14" ry="2.6" fill="#fff" opacity=".22" filter="url(#b3)"/>
+            <path id="upL" d="" fill="url(#upG)"/>
+          </g>
+          <g id="cig">
+            <rect x="228" y="336" width="26" height="5" rx="2" fill="#e8dcc0"/>
+            <rect x="250" y="336" width="8" height="5" rx="1" fill="#c0392b"/>
+            <circle cx="258" cy="338" r="1.6" fill="#ff7a1a" opacity=".9"/>
+            <path d="M260,334 Q264,326 260,318 M262,332 Q267,323 263,314" stroke="#9aa3c7" stroke-width="1.4" fill="none" opacity=".35" stroke-linecap="round"/>
+          </g>
+          <path d="M208,360 L216,366" stroke="#7a1f1f" stroke-width="1.6" stroke-linecap="round" opacity=".7"/>
+
+          <g id="hat">
+            <path d="M96,118 C96,84 140,60 200,60 C260,60 304,84 304,118 L298,124 L102,124 Z" fill="url(#hatG)"/>
+            <path d="M96,118 C96,84 140,60 200,60 C260,60 304,84 304,118 L298,124 L102,124 Z" fill="url(#hShade)" opacity=".5"/>
+            <rect x="100" y="112" width="200" height="14" rx="3" fill="url(#hatBand)"/>
+            <path d="M60,124 C60,116 90,110 200,110 C310,110 340,116 340,124 C340,132 310,138 200,138 C90,138 60,132 60,124Z" fill="url(#hatG)"/>
+            <path d="M60,124 C60,116 90,110 200,110 C310,110 340,116 340,124 C340,132 310,138 200,138 C90,138 60,132 60,124Z" fill="url(#hShade)" opacity=".5"/>
+          </g>
+
+          <g id="hairFront">
+            <path d="M100,140 C110,120 140,105 200,105 C260,105 290,120 300,140 C290,130 260,118 200,118 C140,118 110,130 100,140Z" fill="url(#hairG)"/>
+            <path d="M100,140 C110,120 140,105 200,105 C260,105 290,120 300,140 C290,130 260,118 200,118 C140,118 110,130 100,140Z" fill="url(#hShade)" opacity=".4"/>
+          </g>
+        </g>
+      </svg>
+    </div>
+
+    <div class="bars" id="bars"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+    <div class="who"><h1>Imad AI</h1><p>الرئيس تاع الدارجة • يهدر ويحكم 😎</p></div>
+    <div class="themes" id="themes"></div>
+  </section>
+
+  <section class="panel chat">
+    <div class="chat-h"><b>💬 دردشة مع Imad AI</b><small id="hint">الصوت: ...</small></div>
+    <div class="msgs" id="msgs"></div>
+    <div class="chips" id="chips"></div>
+    <form class="composer" id="form" autocomplete="off">
+      <button type="button" class="cbtn mic" id="mic" title="هدر بصوتك" aria-label="ميكروفون">🎤</button>
+      <input id="inp" placeholder="اكتب هنا... مثلا: واش راك؟" enterkeyhint="send">
+      <button class="cbtn send" aria-label="إرسال">➤</button>
+    </form>
+  </section>
+</main>
+
+<div class="start" id="start">
+  <div class="card">
+    <h2>أهلا بيك في عالم Imad 😎</h2>
+    <p>أنا <b>Imad AI</b>، الرئيس تاع الدارجة الجزائرية.<br>ارفع صوت جهازك واضغط باش نبداو الهدرة.</p>
+    <button class="big" id="go">يلا نبداو 🕶️</button>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+'use strict';
+/* ============================================================================
+   Imad AI – الإصدار 3.0
+   إعادة كتابة كاملة + قاعدة بيانات جديدة من ملف 44.txt (7 قواعد)
+   ============================================================================ */
+
+const $ = s => document.querySelector(s);
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const lerp = (a, b, k) => a + (b - a) * k;
+const toLatin = s => s.replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d));
+
+/* ============================================================================
+   1) قاعدة البيانات – القواعد السبعة من 44.txt
+   ============================================================================ */
+const DEFAULT_DB = {
+  version: 2,
+  rules: [
+    {
+      id: 'howareyou',
+      triggers: ['كيف حالك','كيف حالكي','كيفاش حالك','كيفاش راك','كيف راك','كيف راكي'],
+      response: 'أنا بخير 😎',
+      emotion: 'happy',
+      priority: 100
+    },
+    {
+      id: 'abdou',
+      triggers: ['هل تعرفي عبد الرحمان','تعرفي عبد الرحمان','هل تعرف عبد الرحمان','عبد الرحمان','عبد الرحمن','عبدو'],
+      response: 'نعم، عبدو نقش تاعي ههههههه 😂',
+      emotion: 'laugh',
+      priority: 100
+    },
+    {
+      id: 'wacheraki',
+      triggers: ['واش راكي','واش راكِ','واش راك','واش راكي اليوم'],
+      response: 'راني مقودا 😌',
+      emotion: 'neutral',
+      priority: 100
+    },
+    {
+      id: 'chkounti',
+      triggers: ['شكون انت','شكون انتي','شكون نتي','شكون نتا','شكون أنت','من انت','من أنت'],
+      response: 'شكام تاعك 🐾',
+      emotion: 'happy',
+      priority: 100
+    },
+    {
+      id: 'ghannili',
+      triggers: ['غنيلي','غنّيلي','غني لي','غني','غنّي','شانغي','شانغني'],
+      response: 'شانغنيلك، نقلك «شاب مومو»... تبداي: «آه! عندها يقسيستي بلاصتي، مكاش اللي يديها، تتوحش حنانتي، علبالي بلي مبليا بيها» 🎶🎤',
+      emotion: 'laugh',
+      priority: 110
+    },
+    {
+      id: 'khalil',
+      triggers: ['تعرفي خليل','تعرف خليل','هل تعرفي خليل','هل تعرف خليل','خليل'],
+      response: 'إيه نعرفو، يعيطولو زانداف، يشبه لطراب كينق 😎',
+      emotion: 'happy',
+      priority: 100
+    },
+    {
+      id: 'hanan',
+      triggers: ['هل تعرف حنان','هل تعرفي حنان','تعرفي حنان','تعرف حنان','حنان'],
+      response: 'هيا أختك، وهي معلمة في وزارة جزائرية، بصح قبيحة بزاف ههههههه 😂',
+      emotion: 'laugh',
+      priority: 100
+    }
+  ]
+};
+
+const DB_KEY = 'bushra_db_v2';
+let DB = loadDB();
+function loadDB(){
+  try {
+    const raw = localStorage.getItem(DB_KEY);
+    if (!raw) return structuredClone(DEFAULT_DB);
+    const parsed = JSON.parse(raw);
+    if (!parsed || !Array.isArray(parsed.rules)) return structuredClone(DEFAULT_DB);
+    return parsed;
+  } catch(e){ return structuredClone(DEFAULT_DB); }
+}
+function saveDB(){ try { localStorage.setItem(DB_KEY, JSON.stringify(DB)); } catch(e){} }
+
+/* ============================================================================
+   2) الإعدادات
+   ============================================================================ */
+const THEMES = [
+  {n:'مافيا', a1:'#b91c1c', a2:'#f59e0b', cloth:'#1f2937', hat:'#111827'},
+  {n:'ليل',   a1:'#4b5563', a2:'#9ca3af', cloth:'#111827', hat:'#0b0f19'},
+  {n:'ذهب',   a1:'#b45309', a2:'#fbbf24', cloth:'#1c1917', hat:'#0c0a09'},
+  {n:'دم',    a1:'#7f1d1d', a2:'#ef4444', cloth:'#1a0505', hat:'#0f0202'},
+];
+const RATES = [0.8, 1, 1.2];
+let cfg = {voice:true, rate:1, theme:0, engine:'', hat:true};
+try { Object.assign(cfg, JSON.parse(localStorage.getItem('imad_cfg') || '{}')); } catch(e){}
+const saveCfg = () => { try { localStorage.setItem('imad_cfg', JSON.stringify(cfg)); } catch(e){} };
+
+function toast(t){
+  const e = $('#toast'); e.textContent = t; e.classList.add('on');
+  clearTimeout(toast.t); toast.t = setTimeout(()=>e.classList.remove('on'), 3200);
+}
+
+function applyTheme(i){
+  const t = THEMES[i] || THEMES[0], r = document.documentElement.style;
+  r.setProperty('--a1', t.a1); r.setProperty('--a2', t.a2);
+  r.setProperty('--cloth', t.cloth); r.setProperty('--hat', t.hat);
+  cfg.theme = i; saveCfg();
+  document.querySelectorAll('#themes button').forEach((b,k)=>b.classList.toggle('on',k===i));
+}
+THEMES.forEach((t,i)=>{
+  const b = document.createElement('button');
+  b.title = t.n; b.style.background = `linear-gradient(135deg,${t.a1},${t.a2})`;
+  b.onclick = ()=>applyTheme(i);
+  $('#themes').appendChild(b);
+});
+applyTheme(cfg.theme);
+
+function applyHat(on){
+  cfg.hat = on; saveCfg();
+  $('#hat').style.display = on ? '' : 'none';
+  $('#bHat').classList.toggle('on', on);
+}
+applyHat(cfg.hat);
+
+/* ============================================================================
+   3) الوجه المتحرك
+   ============================================================================ */
+const el = {
+  head:$('#head'), body:$('#body'), mIn:$('#mIn'), upL:$('#upL'), lowL:$('#lowL'), lipHi:$('#lipHi'),
+  clip:$('#mouthClip'), teeth:$('#teeth'), tongue:$('#tongue'),
+  browL:$('#browL'), browR:$('#browR'),
+  irisL:document.querySelector('#eyeL .iris'), irisR:document.querySelector('#eyeR .iris'),
+  lidL:document.querySelector('#eyeL .lid'),   lidR:document.querySelector('#eyeR .lid'),
+  bars:[...document.querySelectorAll('#bars span')], stage:$('#stage'), status:$('#status'),
+  cig:$('#cig')
+};
+const EMO = {
+  neutral :{smile:-.05, bl:0,  br:0,  tilt:0,  squint:.12, head:0,  extraOpen:0},
+  happy   :{smile:.55,  bl:-3, br:-3, tilt:0,  squint:.18, head:2,  extraOpen:0},
+  think   :{smile:-.15, bl:-9, br:1,  tilt:-3, squint:.08, head:-4, extraOpen:0},
+  surprise:{smile:0,    bl:-13,br:-13,tilt:0,  squint:0,   head:0,  extraOpen:.28},
+  sad     :{smile:-.75, bl:-2, br:-2, tilt:13, squint:.15, head:-3, extraOpen:0},
+  laugh   :{smile:.85,  bl:-5, br:-5, tilt:0,  squint:.5,  head:0,  extraOpen:0},
+  listen  :{smile:.2,   bl:-6, br:-6, tilt:0,  squint:.1,  head:4,  extraOpen:0},
+  angry   :{smile:-.7,  bl:-8, br:-8, tilt:6,  squint:.3,  head:-5, extraOpen:0}
+};
+const cur = {...EMO.neutral};
+const S = {open:0, wide:0, speaking:false, listening:false, emo:'neutral', kick:0, lastBoundary:0,
+           lx:0, ly:0, tx:0, ty:0, nextBlink:2, blinkT:-9, nextSacc:1.5, danceUntil:0};
+function setEmo(e){ S.emo = EMO[e] ? e : 'neutral'; }
+
+function drawMouth(open, wide, smile){
+  const cx = 200, cy = 330;
+  const w   = 38 + wide*(wide>0 ? 10 : 14);
+  const cyc = cy - smile*8;
+  const L   = Math.max(0, open)*36;
+  const B   = cy - 4 + L*1.35;
+  const inner = `M${cx-w},${cyc} C${cx-w*.5},${cy-4} ${cx+w*.5},${cy-4} ${cx+w},${cyc} C${cx+w*.6},${B} ${cx-w*.6},${B} ${cx-w},${cyc}Z`;
+  el.mIn.setAttribute('d', inner);
+  el.clip.setAttribute('d', inner);
+  el.upL.setAttribute('d', `M${cx-w},${cyc} C${cx-w*.5},${cy-17} ${cx-9},${cy-14} ${cx},${cy-10} C${cx+9},${cy-14} ${cx+w*.5},${cy-17} ${cx+w},${cyc} C${cx+w*.5},${cy-4} ${cx-w*.5},${cy-4} ${cx-w},${cyc}Z`);
+  el.lowL.setAttribute('d', `M${cx-w},${cyc} C${cx-w*.6},${B} ${cx+w*.6},${B} ${cx+w},${cyc} C${cx+w*.6},${B+19} ${cx-w*.6},${B+19} ${cx-w},${cyc}Z`);
+  el.lipHi.setAttribute('cy', B + 8.5); el.lipHi.setAttribute('rx', w*.36);
+  el.teeth.setAttribute('y', cy-5);
+  el.tongue.setAttribute('cy', cy + L*.95 + 2);
+}
+
+function look(e){
+  const r = $('#av').getBoundingClientRect();
+  const p = e.touches ? e.touches[0] : e;
+  S.tx = Math.max(-1, Math.min(1, (p.clientX - (r.left+r.width/2)) / (innerWidth*.35)));
+  S.ty = Math.max(-1, Math.min(1, (p.clientY - (r.top+r.height*.45)) / (innerHeight*.35)));
+  S.nextSacc = performance.now()/1000 + 5;
+}
+addEventListener('mousemove', look, {passive:true});
+addEventListener('touchmove', look, {passive:true});
+
+function frame(ms){
+  const t = ms/1000;
+  const E = EMO[S.emo];
+  for (const k in E) cur[k] = lerp(cur[k], E[k], .09);
+  const dancing = t < S.danceUntil;
+
+  let tOpen = E.extraOpen, tWide = 0;
+  if (S.speaking){
+    const phrase = Math.pow(.5 + .5*Math.sin(t*2.3 + 1), .35);
+    const syl    = Math.abs(Math.sin(t*10.5 + Math.sin(t*2.7)*2));
+    const syl2   = Math.abs(Math.sin(t*6.3 + 1.7));
+    tOpen = (.10 + .46*syl*(.6+.4*syl2))*phrase + .42*S.kick + E.extraOpen*.6;
+    tWide = Math.sin(t*4.9)*.85 * (.5 + .5*syl2);
+    S.kick *= .87;
+    if (S.emo === 'laugh'){ tOpen = .30 + .32*Math.abs(Math.sin(t*14)); tWide = .9; }
+  } else if (dancing) tOpen = .12;
+  S.open = lerp(S.open, tOpen, .38);
+  S.wide = lerp(S.wide, tWide, .3);
+  drawMouth(S.open, S.wide, cur.smile*(S.speaking ? .8 : 1) + (S.wide<-.3 ? -.15 : 0));
+
+  if (t > S.nextBlink){ S.blinkT = t; S.nextBlink = t + 1.8 + Math.random()*4.2; if (Math.random()<.15) S.nextBlink = t + .35; }
+  const bp = (t - S.blinkT)/.17;
+  const blink = (bp>=0 && bp<=1) ? Math.sin(Math.PI*bp) : 0;
+  const lidH = Math.min(32, 32*blink + cur.squint*9);
+  el.lidL.setAttribute('transform', `translate(0 ${lidH})`);
+  el.lidR.setAttribute('transform', `translate(0 ${lidH})`);
+
+  if (t > S.nextSacc){ S.tx = (Math.random()-.5)*1.1; S.ty = (Math.random()-.5)*.6; S.nextSacc = t + 1.5 + Math.random()*2.5; }
+  const gx = S.listening ? 0 : S.tx, gy = S.listening ? .1 : S.ty;
+  S.lx = lerp(S.lx, gx, .12); S.ly = lerp(S.ly, gy, .12);
+  const ix = S.lx*7, iy = S.ly*4 + (S.emo==='think' ? -3 : 0);
+  el.irisL.setAttribute('transform', `translate(${ix} ${iy})`);
+  el.irisR.setAttribute('transform', `translate(${ix} ${iy})`);
+
+  const emph = -2.2*S.kick;
+  el.browL.setAttribute('transform', `translate(0 ${cur.bl+emph}) rotate(${-cur.tilt} 150 186)`);
+  el.browR.setAttribute('transform', `translate(0 ${cur.br+emph}) rotate(${cur.tilt} 250 186)`);
+
+  let rot = Math.sin(t*.7)*1.1 + cur.head;
+  let ty  = Math.sin(t*1.4)*1.6, sw = 0;
+  if (S.speaking){ rot += Math.sin(t*3.3)*1.7 + Math.sin(t*5.1)*.6; ty -= Math.abs(Math.sin(t*5))*1.6; }
+  if (S.emo==='laugh'){ ty += Math.sin(t*16)*1.8; rot += Math.sin(t*8)*1.2; }
+  if (dancing){ rot += Math.sin(t*6)*6; ty -= Math.abs(Math.sin(t*6))*7; sw = Math.sin(t*3)*10; }
+  rot += S.lx*2.2;
+  el.head.setAttribute('transform', `translate(${S.lx*3+sw} ${ty}) rotate(${rot} 200 392)`);
+  const br = 1 + Math.sin(t*1.4)*.006;
+  el.body.setAttribute('transform', `translate(${sw*.5} 520) scale(1 ${br}) translate(0 -520)`);
+
+  if (el.cig) el.cig.setAttribute('opacity', .85 + .1*Math.sin(t*3));
+
+  el.bars.forEach((b,i)=>{
+    const v = S.speaking ? Math.max(.1, Math.min(1, S.open*1.6*(.55+.45*Math.abs(Math.sin(t*9+i*1.3))) + .08))
+            : S.listening ? .15 + .35*Math.abs(Math.sin(t*5+i)) : .1;
+    b.style.transform = `scaleY(${v})`;
+  });
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+
+function setStatus(txt, mode){
+  el.status.textContent = txt;
+  el.stage.classList.toggle('speaking', mode==='speaking');
+  el.stage.classList.toggle('listening', mode==='listening');
+}
+
+/* ============================================================================
+   4) محرك الصوت – نبرة رجل عميقة
+   ============================================================================ */
+const synth = window.speechSynthesis;
+const keepAlive = [];
+let arVoices = [];
+const MALE_HINTS = ['male','rishi','maged','tarik','hamza','omar','ali','ahmed','khalid','naayf','shakir'];
+const isMaleVoice = v => {
+  const n = (v.name||'').toLowerCase();
+  return MALE_HINTS.some(h => n.includes(h));
+};
+
+function refreshVoices(){
+  try { arVoices = synth ? synth.getVoices().filter(v => /^ar/i.test(v.lang)) : []; } catch(e){ arVoices = []; }
+  arVoices.sort((a,b)=>{
+    const m = (isMaleVoice(a)?0:1) - (isMaleVoice(b)?0:1);
+    if (m) return m;
+    const pref = ['ar-dz','ar-ma','ar-tn','ar-eg','ar-sa'];
+    const f = v => { const i = pref.indexOf(v.lang.toLowerCase().replace('_','-')); return i<0 ? 99 : i; };
+    return f(a)-f(b);
+  });
+  updateHint();
+}
+const engines = () => [...arVoices.map(v=>({type:'synth', v, label:(isMaleVoice(v)?'👨 ':'👩 ') + v.name})), {type:'online', label:'صوت أونلاين'}];
+function currentEngine(){
+  const list = engines();
+  return list.find(e=>e.label===cfg.engine) || list[0];
+}
+function updateHint(){
+  const h = $('#hint'); if (!h) return;
+  h.textContent = cfg.voice ? 'الصوت: ' + currentEngine().label : 'الصوت مكتوم 🔇';
+}
+if (synth){ refreshVoices(); synth.onvoiceschanged = refreshVoices; } else updateHint();
+
+const cleanForSpeech = s => s
+  .replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27BF}\u{FE0F}]/gu,' ')
+  .replace(/[«»*#_`~>]/g,' ').replace(/\s+/g,' ').trim();
+
+function splitParts(text, max){
+  const raw = text.match(/[^.!؟?،,\n:]+[.!؟?،,\n:]*/g) || [text];
+  const out = [];
+  raw.forEach(p=>{
+    p = p.trim(); if (!p) return;
+    while (p.length > max){
+      let cut = p.lastIndexOf(' ', max); if (cut < 40) cut = max;
+      out.push(p.slice(0,cut).trim()); p = p.slice(cut).trim();
+    }
+    if (p) out.push(p);
+  });
+  return out;
+}
+
+let speakToken = 0, simTimer = null, kickTimer = null, curAudio = null, warned = false;
+function stopSpeak(){
+  speakToken++; clearTimeout(simTimer); clearInterval(kickTimer);
+  try { if (synth) synth.cancel(); } catch(e){}
+  if (curAudio){ try { curAudio.pause(); } catch(e){} curAudio = null; }
+  S.speaking = false; setStatus('متصلة');
+}
+function startKicks(my){
+  clearInterval(kickTimer);
+  kickTimer = setInterval(()=>{
+    if (my!==speakToken || !S.speaking) return clearInterval(kickTimer);
+    if (performance.now() - S.lastBoundary > 450) S.kick = 1;
+  }, 240);
+}
+function simulate(clean, my, finish){
+  startKicks(my);
+  simTimer = setTimeout(finish, Math.min(10000, 600 + clean.length*65/cfg.rate));
+}
+function speakSynth(parts, eng, my, finish, fail){
+  let i = 0, started = false;
+  const watchdog = setTimeout(()=>{ if (my===speakToken && !started) fail('synth'); }, 2200);
+  const next = ()=>{
+    if (my!==speakToken) return;
+    if (i >= parts.length){ clearTimeout(watchdog); return finish(); }
+    const u = new SpeechSynthesisUtterance(parts[i++]);
+    u.lang = eng.v ? eng.v.lang : 'ar-SA'; if (eng.v) u.voice = eng.v;
+    u.rate = cfg.rate * 0.92;
+    u.pitch = 0.55;
+    u.volume = 1;
+    u.onstart = ()=>{ started = true; startKicks(my); };
+    u.onboundary = ()=>{ S.kick = 1; S.lastBoundary = performance.now(); };
+    u.onend = next;
+    u.onerror = ev => { if (ev.error==='canceled' || ev.error==='interrupted') return; if (!started) { clearTimeout(watchdog); fail('synth'); } else next(); };
+    keepAlive.push(u); if (keepAlive.length>12) keepAlive.shift();
+    synth.speak(u);
+    try { synth.resume(); } catch(e){}
+  };
+  next();
+}
+function speakOnline(parts, my, finish, fail){
+  let i = 0, anyOk = false;
+  const play = ()=>{
+    if (my!==speakToken) return;
+    if (i >= parts.length) return finish();
+    const a = new Audio('https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=ar&q=' + encodeURIComponent(parts[i++]));
+    curAudio = a; a.playbackRate = cfg.rate * 0.92;
+    a.onplaying = ()=>{ anyOk = true; startKicks(my); };
+    a.onended = play;
+    a.onerror = ()=>{ if (anyOk) play(); else fail('online'); };
+    const p = a.play(); if (p && p.catch) p.catch(()=>{ if (!anyOk) fail('online'); });
+  };
+  play();
+}
+function speak(text){
+  return new Promise(resolve=>{
+    stopSpeak();
+    const my = speakToken;
+    const clean = cleanForSpeech(text);
+    S.speaking = true; setStatus('يهدر...', 'speaking');
+    const finish = ()=>{ if (my!==speakToken) return; clearInterval(kickTimer); S.speaking=false; setStatus('متصلة'); resolve(); };
+    if (!cfg.voice || !clean){ simulate(clean, my, finish); return; }
+
+    let triedOnline = false;
+    const fail = from => {
+      if (my!==speakToken) return;
+      try { if (synth) synth.cancel(); } catch(e){}
+      if (from==='synth' && !triedOnline){ triedOnline = true; speakOnline(splitParts(clean,170), my, finish, fail); return; }
+      if (!warned){ warned = true; toast('ما قدرتش نشغل الصوت 🔇 تأكد أن صوت جهازك مفتوح، وجرب زر 🎙️ لتغيير الصوت'); }
+      simulate(clean, my, finish);
+    };
+    setTimeout(()=>{
+      if (my!==speakToken) return;
+      refreshVoices();
+      const eng = currentEngine();
+      if (eng.type==='online'){ triedOnline = true; speakOnline(splitParts(clean,170), my, finish, fail); }
+      else speakSynth(splitParts(clean,160), eng, my, finish, fail);
+    }, 170);
+  });
+}
+
+function paintTools(){
+  $('#bMute').textContent = cfg.voice ? '🔊' : '🔇';
+  $('#bMute').classList.toggle('on', !cfg.voice);
+  $('#bRate').textContent = cfg.rate + '×';
+  updateHint();
+}
+$('#bMute').onclick = ()=>{ cfg.voice = !cfg.voice; saveCfg(); paintTools(); if (!cfg.voice) stopSpeak(); else toast('الصوت مفتوح 🔊'); };
+$('#bRate').onclick = ()=>{ const i = (RATES.indexOf(cfg.rate)+1) % RATES.length; cfg.rate = RATES[i]; saveCfg(); paintTools(); toast('سرعة الكلام: ' + cfg.rate + '×'); };
+$('#bHat').onclick = ()=>{ applyHat(!cfg.hat); setEmo('happy'); setTimeout(()=>setEmo('neutral'),1500); };
+$('#bVoice').onclick = async ()=>{
+  const list = engines(); const idx = list.findIndex(e=>e.label===currentEngine().label);
+  cfg.engine = list[(idx+1)%list.length].label; saveCfg(); paintTools();
+  cfg.voice = true; paintTools();
+  setEmo('happy'); await speak('هذا هو صوتي دروك، واش رايك؟');
+  setTimeout(()=>setEmo('neutral'),1000);
+};
+paintTools();
+
+/* ============================================================================
+   5) دماغ Imad AI المحلي
+   ============================================================================ */
+const nz = s => toLatin(s.toLowerCase())
+  .replace(/[ً-ٰٟـ]/g,'')
+  .replace(/[إأآٱ]/g,'ا').replace(/ى/g,'ي').replace(/ة/g,'ه').replace(/ؤ/g,'و').replace(/ئ/g,'ي')
+  .replace(/[^\p{L}\p{N}\s+\-*/×÷.]/gu,' ').replace(/\s+/g,' ').trim();
+const has = (text, list) => list.some(k => {
+  k = nz(k);
+  return k.length<=3 ? (' '+text+' ').includes(' '+k+' ') : text.includes(k);
+});
+
+const mem = {last:{}, name:'', game:null, riddle:null, riddleIdx:-1, timers:0};
+function pick(key, arr){
+  let i; do { i = Math.floor(Math.random()*arr.length); } while (arr.length>1 && i===mem.last[key]);
+  mem.last[key] = i; return arr[i];
+}
+const nm = () => mem.name ? ' ' + mem.name : '';
+
+const JOKES = [
+  'واحد راح عند الطبيب وقاله: يا دكتور، كل ما نشرب القهوة نحس بوجع في عيني. قاله الطبيب: جرب تشيل المعلقة من الكاس قبل ما تشرب! 😂',
+  'المعلم سقسى التلميذ: إذا عندك عشرة دراهم وطلبت من باباك عشرة أخرى، قداش يولو عندك؟ قاله: عشرة يا أستاذ. قاله المعلم: ما تعرفش الحساب! قاله التلميذ: وأنت ما تعرفش باباي! 😂',
+  'واحد قال لصاحبو: راني نبغي ننقص من وزني، شنو ندير؟ قاله: كل مرة تحب تاكل قول لروحك "غدوة". قاله: وإذا جاء غدوة؟ قاله: عاود قولها! 😅',
+  'جوج صحاب مشاو للبحر، واحد قال: الماء بارد! قاله الثاني: ما تخافش، غير دخل شوية شوية. قاله: خليني نتسنى الصيف! 😄',
+  'واحد سقسى جارو: واش مالك تجري مع الطوبيس؟ قاله: نربح دينار، خاطر الطوبيس يدي منو ثلاثين دينار والجري ببلاش! 😂'
+];
+const PROVERBS = [
+  ['«اللي فات مات»', 'يعني ما تبقاش تفكر في الماضي، عيش دروك.'],
+  ['«الجار قبل الدار»', 'يعني الجار الطيب أهم من الدار الكبيرة.'],
+  ['«الصحة تاج على رؤوس الأصحاء»', 'ما يعرف قيمتها غير المريض، الله يحفظنا.'],
+  ['«ما يحس بالجمرة غير اللي كواتو»', 'يعني ما يفهم المشكل غير اللي عاشو.'],
+  ['«اللي ما يعرف الصقر يشويه»', 'يعني اللي ما يعرف قيمة الشي يضيعو.'],
+  ['«الصبر مفتاح الفرج»', 'اصبر شوية والأمور تتحسن بإذن الله.']
+];
+const STORIES = [
+  'كان يا ما كان، فرخة صغيرة سميتها زينة، كانت تحلم تطير. كل يوم تجرب وتطيح، والناس يضحكو عليها. وفي يوم طلعت للسطح وفرشت جناحيها ورفرفت وحطت فوق الشجرة. فهمت أن اللي يحاول ما يخسرش أبدا. 🐤',
+  'في قرية صغيرة في الجبل، نشفت عين الماء. الشباب قالو نروحو نسكنو بعيد، بصح جدة عجوز قالتلهم: نحفرو مع بعضنا. حفرو جميعا أسبوع كامل ورجعت الماء أحلى من قبل. القوة في الجماعة، والصبر يجيب الخير. 💧'
+];
+const RIDDLES = [
+  {q:'حاجيتك ماجيتك... واش هو الشي اللي يمشي معاك وين ما مشيت وما تقدرش تمسكو؟', a:['ظل','الظل','ضل']},
+  {q:'حاجيتك ماجيتك... واش هو الشي اللي كل ما نشّف يتبلل؟', a:['فوطه','منشفه','المنشفه','الفوطه']},
+  {q:'حاجيتك ماجيتك... واش هو الشي اللي كل ما تاخذ منو يكبر؟', a:['حفره','الحفره']},
+  {q:'حاجيتك ماجيتك... واش هو الشي اللي عندو مفاتيح بصح ما يفتح حتى باب؟', a:['بيانو','البيانو','كلافي','الكلافي','كيبورد','لوحه المفاتيح']},
+  {q:'حاجيتك ماجيتك... واش هو الشي اللي يبكي بلا عينين ويمشي بلا رجلين؟', a:['سحاب','السحاب','غيم','الغيم','سحابه']},
+  {q:'سؤال ثقافة: في أي سنة استقلت الجزائر؟', a:['1962']},
+  {q:'سؤال ثقافة: في أي سنة انطلقت الثورة التحريرية؟', a:['1954']}
+];
+const RECIPES = {
+  chorba: 'الشربة الجزائرية، أحلى طبق في رمضان! نحمرو البصلة المقطعة في شوية زيت، نزيدو اللحم والحمص والطماطم المبشورة والتوابل (فلفل أحمر، ملح، قرفة)، نصبو الماء ونخليوها تطيب مليح. في الآخر نزيدو الفريك ونتركوها شوية، ونزينوها بالقزبر والمعدنوس. بالصحة والراحة! 🍲',
+  couscous: 'الكسكسي سيد الموائد! نسقيو السميد ونفتلوه بشوية زيت وماء ونطيبوه على البخار مرتين. المرقة نطيبوها بالبصل واللحم والحمص والخضرة: جزر، لفت، قرع وكوسة. في الآخر نصبو المرقة على الكسكسي ونزينوه. 😋',
+  makrout: 'المقروط حلويات العيد! عجينة السميد بالزبدة نحشيوها بالتمر المعجون بالقرفة، نقطعوها لمعينات ونقليوها أو نطيبوها في الفرن، ونغطسوها في العسل. يا سلام! 🍯'
+};
+
+function parseTimer(text){
+  if (!has(text, ['ذكرني','موقت','تايمر','نبهني','نبهيني','عداد','منبه','timer'])) return null;
+  const m = text.match(/(\d+)\s*(ثانيه|ثواني|ثانيتين|دقيقه|دقايق|دقائق|دقيقتين|ساعه|ساعات|ساعتين)/);
+  let n, unit;
+  if (m){ n = +m[1]; unit = m[2]; }
+  else if (/دقيقتين/.test(text)){ n=2; unit='دقيقه'; }
+  else if (/ثانيتين/.test(text)){ n=2; unit='ثانيه'; }
+  else if (/ساعتين/.test(text)){ n=2; unit='ساعه'; }
+  else return {t:'قولي شحال من الوقت، مثلا: «ذكرني بعد 5 دقايق» ⏰', e:'think'};
+  const mult = /ثان|ثوان/.test(unit) ? 1000 : /ساع/.test(unit) ? 3600000 : 60000;
+  const ms = n*mult;
+  if (ms<=0 || ms>3*3600000) return {t:'نقدر نذكرك من ثانية حتى 3 ساعات، اختار وقت آخر.', e:'think'};
+  mem.timers++;
+  setTimeout(()=>botSay(`وقتك سالا${nm()}! ⏰ هذا هو التذكير اللي طلبتو مني.`, 'surprise'), ms);
+  const label = m ? `${n} ${m[2]}` : 'الوقت اللي طلبتو';
+  return {t:`مفهوم! نذكرك بعد ${label}. ⏰`, e:'happy'};
+}
+
+function startGame(){
+  mem.game = {n: 1+Math.floor(Math.random()*100), tries:0};
+  return {t:'يلا نلعبو! 🎯 خمنت رقم من 1 حتى 100، عندك 7 محاولات. قولي أول رقم.', e:'happy'};
+}
+function playGame(raw){
+  const text = nz(raw);
+  if (has(text,['وقف','ستوب','خلاص','نوقف','ما نبغيش','مانبغيش','stop'])){
+    const n = mem.game.n; mem.game = null;
+    return {t:`مليح، وقفنا اللعبة. الرقم كان ${n}. 😉`, e:'neutral'};
+  }
+  const m = toLatin(raw).match(/\d+/); if (!m) return null;
+  const g = +m[0]; mem.game.tries++;
+  if (g === mem.game.n){
+    const k = mem.game.tries; mem.game = null;
+    return {t:`برافو! 🎉 لقيتو في ${k} ${k<=2?'محاولات فقط':'محاولات'}، نتا ذكي بزاف!`, e:'laugh'};
+  }
+  if (mem.game.tries>=7){
+    const n = mem.game.n; mem.game = null;
+    return {t:`سالاو المحاولات! 😅 الرقم كان ${n}. نعاودو؟ قولي «نلعبو».`, e:'happy'};
+  }
+  const left = 7 - mem.game.tries;
+  return {t: g<mem.game.n
+    ? `زيد شوية، الرقم أكبر من ${g} ⬆️ (بقاو ${left} محاولات)`
+    : `نقص شوية، الرقم أصغر من ${g} ⬇️ (بقاو ${left} محاولات)`, e:'think'};
+}
+function startRiddle(){
+  let i; do { i = Math.floor(Math.random()*RIDDLES.length); } while (RIDDLES.length>1 && i===mem.riddleIdx);
+  mem.riddleIdx = i; mem.riddle = {...RIDDLES[i], tries:0};
+  return {t: mem.riddle.q + ' 🤔', e:'think'};
+}
+function playRiddle(raw){
+  const text = nz(raw); const r = mem.riddle;
+  if (r.a.some(x => text.includes(nz(x)))){ mem.riddle = null; return {t:'صح عليك! 🎉 نتا قدها. تحب لغز آخر؟ قولي «لغز».', e:'laugh'}; }
+  if (has(text,['ما نعرفش','مانعرفش','جاوب','استسلمت','نستسلم','اعطيني الجواب','الجواب','معرفتش','ما عرفتش'])){
+    const a = r.a[0]; mem.riddle = null;
+    return {t:`الجواب هو: ${a}! 😄 نعاودو بلغز آخر؟`, e:'happy'};
+  }
+  if (++r.tries >= 3){ const a = r.a[0]; mem.riddle = null; return {t:`قربت! الجواب كان: ${a}. 😉 نعاودو بلغز آخر؟`, e:'happy'}; }
+  return {t:'ماشي هو، جرب مرة أخرى! 😉 (ولا قولي «ما نعرفش»)', e:'think'};
+}
+
+/* ============================================================================
+   6) مطابقة قاعدة البيانات المخصصة (أولوية قصوى)
+   ============================================================================ */
+function matchDB(raw){
+  const text = nz(raw);
+  if (!text) return null;
+  const rules = (DB.rules || []).slice().sort((a,b)=>(b.priority||0)-(a.priority||0));
+  for (const rule of rules){
+    if (!rule.triggers || !rule.response) continue;
+    if (rule.triggers.some(tr => {
+      const t = nz(tr);
+      if (!t) return false;
+      return t.length <= 3 ? (' '+text+' ').includes(' '+t+' ') : text.includes(t);
+    })){
+      return {t: rule.response, e: rule.emotion || 'happy', fromDB: rule.id};
+    }
+  }
+  return null;
+}
+
+const RULES = [
+  [['سلام','السلام','مرحبا','اهلا','هلا','صباح الخير','مساء الخير','hello','salut','slm','salam','ahla','coucou','wesh','wach','هاي','hi','cc','صباح النور'],
+    () => { const h = new Date().getHours(); const g = h<12 ? 'صباح الخير' : h<18 ? 'نهارك مبروك' : 'مساء الخير';
+      return {t: pick('hi',[`وعليكم السلام! ${g}${nm()}، واش راك؟ لاباس عليك؟ 😎`, `أهلا بيك${nm()}! ${g}، كيفاش نقدر نعاونك اليوم؟`, `هلا هلا! ${g}، راني هنا. واش نحكيو اليوم؟ 😄`]), e:'happy'}; }],
+  [['الحمد لله','hamdoulah','hamdullah','راني مليح','راني مليحه','راني بخير','بخير','mlih','mliha'],
+    () => ({t: pick('fine',['صحا! الحمد لله على كل حال. فرحتلي بزاف 😊','يا سلام، هكا نحبك دايما مليح. واش نديرو دروك؟','الله يخليك، الحمد لله. قولي واش حاب نحكيو عليه؟']), e:'happy'})],
+  [['لاباس','labas','la bas','ça va','ca va','cv','كي دايره','واش اخبارك','اخبارك','كي راك'],
+    () => ({t: pick('how',[`الحمد لله راني مليح وفرحان نهدر معاك${nm()}! وانت واش راك، لاباس عليك؟`,'لاباس الحمد لله، نتمنى انت زادة مليح! واش عندك اليوم؟','راني بخير والحمد لله، ديما جاهز نهدر معاك. وانت كيفاش حالك؟']), e:'happy'})],
+  [['شكرا','يعطيك الصحه','يعطيك','بارك الله','merci','thanks','thx','صحيت','صحا','بصحتك'],
+    () => ({t: pick('thx',['بلا جميل، هذا واجبي! 😊','الله يبارك فيك، نيتي نعاونك ديما.','صحا ليك! أنا هنا كي تحتاجني.']), e:'happy'})],
+  [['مع السلامه','بسلامه','نتلاقاو','نشوفك','اوريفوار','au revoir','bye','تصبح على خير','تصبحين على خير','a plus'],
+    () => ({t: pick('bye',['في أمان الله! نتلاقاو على خير 👋','بسلامة، ما تنساش ترجع نهدر معاك!','تصبح على خير! الله يحفظك 🌙']), e:'happy'})],
+  [['واش تقدر','شنو تقدر','شنو تدير','واش تدير','ساعدني','مساعده','help','ماذا تفعل','مميزات','واش تعرف'],
+    () => ({t:'نقدر نهدر معاك بالدارجة 💬\n• نكت 😂 وأمثال جزائرية 📜 وقصص قصيرة 📖\n• ألغاز (قولي «لغز») 🤔 ولعبة تخمين الرقم (قولي «نلعبو») 🎯\n• مؤقت (مثلا «ذكرني بعد 5 دقايق») ⏰\n• الوقت والتاريخ وعمليات حسابية 🧮\n• وصفات طبخ جزائرية 🍲\n• نرقص لك (قولي «ارقصي») 💃\n• عندي قاعدة بيانات خاصة بالردود (زر 🗄️ فوق)\nوتقدر تبدل صوتي وقبعتي من الأزرار فوق. 🎩', e:'happy'})],
+  [['دارجه','جزايريه','جزائريه','لغه','تهدر عربيه'],
+    () => ({t:'أنا نحاول نهدر بالدارجة الجزائرية، بصح ما نكونش مليح 100%. صححلي إذا غلطت وأنا نتعلم! 😄', e:'happy'})],
+  [['سميتك','اسمك','شكون صنعك','شكون خدمك','شكون دارك','روبوت','ذكاء اصطناعي','robot','انسان'],
+    () => ({t:'سميتي Imad AI. أنا مساعد ذكي (مانيش إنسان)، خدموني باش نهدر معاك بالدارجة الجزائرية ونعاونك. وانت واش اسمك؟', e:'happy'})],
+  [['ارقص','رقص','نرقص','danse'],
+    () => { S.danceUntil = performance.now()/1000 + 6; return {t:'هيا نرقصو! 💃🎶 شوف كي نتحرك!', e:'laugh'}; }],
+  [['قصه','حكايه','احكي'],
+    () => ({t: pick('story',STORIES), e:'happy'})],
+  [['الساعه','وقتاش','شحال الساعه','heure','كم الساعه','قداش الساعه','قداه الساعه','الوقت'],
+    () => { const d = new Date(); return {t:`الساعة دروك ${d.getHours()}:${String(d.getMinutes()).padStart(2,'0')} ⏰`, e:'neutral'}; }],
+  [['التاريخ','شنو نهار','اشمن نهار','اش من نهار','اي يوم','نهار شنو','اشمن يوم','اي تاريخ','date','في اي شهر'],
+    () => ({t:`اليوم هو ${new Date().toLocaleDateString('ar-DZ',{weekday:'long',year:'numeric',month:'long',day:'numeric'})} 📅`, e:'neutral'})],
+  [['نكته','نكت','ضحكني','ضحكيني','فرحني','joke','blague','هرج','هات نكته'], () => ({t: pick('joke',JOKES), e:'laugh'})],
+  [['مثل','امثال','حكمه','مثل جزايري','حكمه جزائريه','مثل جزائري'],
+    () => { const p = PROVERBS[Math.floor(Math.random()*PROVERBS.length)]; return {t:`${p[0]}. ${p[1]} 📜`, e:'think'}; }],
+  [['كسكس','كسكسي'], () => ({t:RECIPES.couscous, e:'happy'})],
+  [['مقروط','حلويات','حلوى','قلب اللوز'], () => ({t:RECIPES.makrout, e:'happy'})],
+  [['شربه','شوربه','اكله','وصفه','طبخ','اكل','جوعان','جيعان','نطيب','نطبخ','cuisine','recette'], () => ({t:RECIPES.chorba, e:'happy'})],
+  [['كره','كوره','خضر','الخضر','منتخب','ماتش','foot','محرز','مولوديه','شباب بلوزداد','اتحاد'],
+    () => ({t: pick('foot',['الكرة؟ يا سلام! حنا الجزائريين عندنا حب كبير للخضر والكرة. شكون فريقك المفضل؟ ⚽','آه الخضر! ديما نحبو نشجعوهم من القلب 🇩🇿 شكون لاعبك المفضل؟']), e:'surprise'})],
+  [['قهوه','كافي','شاي','atay','cafe','kahwa'],
+    () => ({t:'القهوة؟ هي المزاج الأول! فنجان قهوة وشوية هدرة مليحة وتتهنى الدنيا ☕ تحبها سادة ولا بالحليب؟', e:'happy'})],
+  [['حزين','زعفان','متضايق','مخنوق','تعبان','تعبانه','زهقت','زاهق','مكتئب','نبكي','ضاق بيا','مانيش مليح','ماراني مليح','triste','مهموم','وحيد','وحده'],
+    () => ({t:`ما تحزنش${nm()}، الدنيا دوارة وكل شي يدوز بإذن الله. حكيلي واش صرا، راني نسمعك. وإذا كان الحزن كبير، هدر مع واحد من قرايبك ولا صحابك، ما تبقاش وحدك. 🤍`, e:'sad'})],
+  [['نحبك','بحبك',"je t'aime",'حبيبتي','تتزوجيني','تزوجيني','نتزوج'],
+    () => ({t:'هههه كلامك زوين، شكرا بزاف! بصح أنا مساعد ذكي ماشي إنسان، نبقى صحابك الوفي ونهدر معاك في أي وقت. 😄', e:'happy'})],
+  [['زوينه','جميله','زوين','ماشاء الله','ماشاءالله','تجنن','رائعه','برافو','bravo','احسنت','مبدعه'],
+    () => ({t: pick('comp',['الله يبارك فيك، هذا من ذوقك! 😊','يعطيك الصحة، كلامك يفرح القلب! 💜']), e:'happy'})],
+  [['قبيحه','وحشه','بشعه','غبيه','حمقاء'],
+    () => ({t:'هههه كل واحد وذوقو! أنا نحاول نكون طيب وخفيف معاك، وهذا هو الأهم. 😄', e:'happy'})],
+  [['هههه','ههه','lol','mdr','هه'], () => ({t: pick('lol',['ههه ضحكتني معاك! 😂','يا سلام على الضحكة، هكا نحبك! 😄','هههه الله يديمها عليك!']), e:'laugh'})],
+  [['طقس','الجو','مطر','تمطر','meteo','weather','سخون','برد'],
+    () => ({t:'ما نقدرش نشوف الطقس من هنا، بصح كي تخرج دير جاكيطة احتياطا، خير من البرد! 🌦️', e:'think'})]
+];
+
+function calc(raw){
+  const m = toLatin(raw).match(/(-?\d+(?:[.,]\d+)?)\s*([+\-*/×÷xX])\s*(-?\d+(?:[.,]\d+)?)/);
+  if (!m) return null;
+  const a = parseFloat(m[1].replace(',','.')), b = parseFloat(m[3].replace(',','.')), o = m[2];
+  let r;
+  if (o==='+') r = a+b;
+  else if (o==='-') r = a-b;
+  else if ('*×xX'.includes(o)) r = a*b;
+  else { if (b===0) return {t:'القسمة على صفر؟ حتى أنا ما نقدرش! 😅', e:'surprise'}; r = a/b; }
+  r = Math.round(r*1e6)/1e6;
+  return {t:`الجواب هو ${r}. بسيطة! 🧮`, e:'happy'};
+}
+
+function localBrain(raw){
+  raw = toLatin(raw);
+  const text = nz(raw);
+
+  /* قاعدة البيانات المخصصة أولاً */
+  const dbHit = matchDB(raw);
+  if (dbHit) return dbHit;
+
+  if (mem.game){
+    const isGuess = text.split(' ').length <= 4 && !calc(raw) && !has(text,['ذكرني','موقت','تايمر','نبهني','منبه']);
+    if (isGuess || has(text,['وقف','ستوب','خلاص','نوقف','stop'])){ const g = playGame(raw); if (g) return g; }
+  }
+  if (mem.riddle){
+    if (has(text,['وقف','ستوب','خلاص','stop'])){ mem.riddle = null; return {t:'مليح، وقفنا الألغاز. 😉 قولي «لغز» كي تحب نعاودو.', e:'neutral'}; }
+    const tm0 = parseTimer(text); if (tm0) return tm0;
+    return playRiddle(raw);
+  }
+
+  const tm = parseTimer(text); if (tm) return tm;
+  const c = calc(raw); if (c) return c;
+
+  if (has(text,['لغز','الغاز','حجايه','حاجيتك','حاجيني','فزوره','ثقافه عامه','سؤال ثقافه'])) return startRiddle();
+  if (has(text,['نلعبو','نلعب','لعبه','تخمين','خمن','نلعبوا'])) return startGame();
+
+  const nameM = text.match(/(?:اسمي|سميتي|نادوني|my name is)\s+(\S+)/);
+  if (nameM && nameM[1] !== 'عماد'){
+    mem.name = raw.trim().split(/\s+/).slice(-1)[0].replace(/[^\p{L}]/gu,'') || nameM[1];
+    return {t:`تشرفنا يا ${mem.name}! اسم مليح بزاف 😊 واش نقدر نعاونك؟`, e:'happy'};
+  }
+  if (text.split(' ').length <= 2 && has(text,['عماد','imad','ايماد']))
+    return {t: pick('call',['نعم؟ راني هنا نسمعك 😎','آمر، واش تحتاج؟','أيوا، قول!']), e:'happy'};
+
+  for (const rule of RULES){ if (has(text, rule[0])) return rule[1](); }
+  return {t: pick('def',['ما فهمتكش مليح، تقدر تعاود بطريقة أخرى؟ 🤔','حكيلي أكثر، راني نسمعك 👂','هاذي ما عرفتهاش، بصح جرب: «لغز»، «نلعبو»، «نكتة»، ولا «واش تقدر».','سمحلي، ما قدرتش نفهم. واش تقصد بالضبط؟']), e:'think'};
+}
+
+/* ============================================================================
+   7) واجهة الدردشة
+   ============================================================================ */
+const msgs = $('#msgs');
+function addMsg(who, text){
+  const d = document.createElement('div'); d.className = 'm '+who;
+  const sp = document.createElement('span'); sp.textContent = text; d.appendChild(sp);
+  if (who==='bot'){
+    const b = document.createElement('button'); b.className = 'rp'; b.textContent = '🔊'; b.title = 'أعد النطق'; b.type = 'button';
+    b.onclick = async ()=>{ cfg.voice || (cfg.voice = true, paintTools()); setEmo('happy'); await speak(text); setEmo('neutral'); };
+    d.appendChild(b);
+  }
+  msgs.appendChild(d); msgs.scrollTop = msgs.scrollHeight; return d;
+}
+function showTyping(){
+  const t = document.createElement('div'); t.className = 'typing'; t.id = 'typing';
+  t.innerHTML = '<i></i><i></i><i></i>';
+  msgs.appendChild(t); msgs.scrollTop = msgs.scrollHeight;
+}
+function hideTyping(){ const t = $('#typing'); if (t) t.remove(); }
+
+let emoTimer = null;
+async function botSay(text, emo){
+  hideTyping(); addMsg('bot', text); setEmo(emo || 'happy');
+  await speak(text);
+  clearTimeout(emoTimer);
+  emoTimer = setTimeout(()=>{ if (!S.speaking) setEmo('neutral'); }, 1400);
+}
+async function send(text){
+  text = text.trim(); if (!text) return;
+  stopSpeak(); clearTimeout(emoTimer);
+  addMsg('user', text);
+  setEmo('think'); setStatus('يفكر...'); showTyping();
+  const r = localBrain(text);
+  await sleep(600 + Math.random()*450);
+  await botSay(r.t, r.e);
+}
+
+$('#form').addEventListener('submit', e=>{ e.preventDefault(); const v = $('#inp').value; $('#inp').value = ''; send(v); });
+$('#inp').addEventListener('input', ()=>{ S.tx = -.5; S.ty = .6; S.nextSacc = performance.now()/1000 + 3; });
+
+const CHIPS = ['😂 نكتة','🤔 لغز','🎯 نلعبو','📜 مثل جزائري','📖 قصة','💃 ارقصي','⏰ ذكرني بعد دقيقة','🍲 وصفة شربة','🧮 25 × 4','💬 واش تقدر','🎤 غنيلي','👤 تعرفي خليل'];
+CHIPS.forEach(c=>{
+  const b = document.createElement('button'); b.type = 'button'; b.textContent = c;
+  b.onclick = ()=>send(c.replace(/^\S+\s/,''));
+  $('#chips').appendChild(b);
+});
+
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+let rec = null;
+$('#mic').onclick = ()=>{
+  if (!SR) return toast('متصفحك ما يدعمش التعرف على الصوت، جرب Chrome');
+  if (rec){ rec.stop(); return; }
+  stopSpeak();
+  rec = new SR(); rec.lang = 'ar-DZ'; rec.interimResults = true; rec.maxAlternatives = 1;
+  let finalText = '';
+  rec.onstart = ()=>{ S.listening = true; setEmo('listen'); setStatus('يسمعك...','listening'); $('#mic').classList.add('rec'); };
+  rec.onresult = e=>{ let s = ''; for (const r of e.results){ s += r[0].transcript; if (r.isFinal) finalText = s; } $('#inp').value = s; };
+  rec.onerror = e=>{ if (e.error!=='aborted' && e.error!=='no-speech') toast('مشكل في الميكروفون: '+e.error); };
+  rec.onend = ()=>{
+    S.listening = false; $('#mic').classList.remove('rec'); rec = null; setStatus('متصلة'); setEmo('neutral');
+    const v = ($('#inp').value || finalText).trim(); $('#inp').value = '';
+    if (v) send(v);
+  };
+  try { rec.start(); } catch(e){ rec = null; }
+};
+
+const HELLO = 'السلام عليكم! أنا Imad AI، الرئيس تاع الدارجة الجزائرية. واش راك؟ قولي واش نقدر نعاونك؟';
+addMsg('bot', HELLO);
+setEmo('happy');
+$('#go').onclick = async ()=>{
+  $('#start').classList.add('hide');
+  cfg.voice = true; paintTools();
+  setEmo('happy');
+  await speak(HELLO);
+  setTimeout(()=>setEmo('neutral'),1200);
+  $('#inp').focus();
+};
+</script>
+</body>
+</html>

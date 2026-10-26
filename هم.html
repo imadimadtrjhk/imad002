@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>قاعدة بيانات Imad AI 🗄️</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --a1:#b91c1c; --a2:#f59e0b;
+  --bg:#05060a; --glass:rgba(255,255,255,.06); --stroke:rgba(255,255,255,.12);
+  --txt:#eef1ff; --mut:#9aa3c7; --danger:#ef4444; --ok:#10b981;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:'Tajawal',system-ui,sans-serif;color:var(--txt);background:var(--bg);min-height:100dvh}
+.bg{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+.bg i{position:absolute;border-radius:50%;filter:blur(90px);opacity:.4}
+.bg i:nth-child(1){width:420px;height:420px;background:var(--a1);top:-120px;right:-80px}
+.bg i:nth-child(2){width:380px;height:380px;background:var(--a2);bottom:-140px;left:-80px}
+.wrap{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:24px 18px 60px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+h1{margin:0;font-size:26px;font-weight:800;background:linear-gradient(90deg,var(--a2),#fff,var(--a1));-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{color:var(--mut);font-size:13.5px;margin-top:4px}
+.btn{border:1px solid var(--stroke);background:rgba(255,255,255,.07);color:var(--txt);padding:9px 16px;border-radius:12px;font:inherit;font-size:14px;cursor:pointer;transition:.2s}
+.btn:hover{background:rgba(255,255,255,.15);transform:translateY(-1px)}
+.btn.primary{background:linear-gradient(135deg,var(--a1),var(--a2));border:0;color:#fff;font-weight:700;box-shadow:0 8px 22px rgba(0,0,0,.3)}
+.btn.danger{color:#fecaca;border-color:rgba(239,68,68,.5)}
+.btn.danger:hover{background:rgba(239,68,68,.18)}
+.btn.ok{color:#bbf7d0;border-color:rgba(16,185,129,.5)}
+.btn.ok:hover{background:rgba(16,185,129,.18)}
+.panel{background:var(--glass);border:1px solid var(--stroke);border-radius:22px;padding:18px;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);margin-bottom:18px}
+.panel h2{margin:0 0 12px;font-size:18px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.row.full{grid-template-columns:1fr}
+label{display:block;font-size:13px;color:var(--mut);margin-bottom:5px}
+input,textarea,select{width:100%;border:1px solid var(--stroke);background:rgba(255,255,255,.06);color:var(--txt);border-radius:12px;padding:11px 13px;font:inherit;font-size:14.5px;outline:none;transition:.2s}
+input:focus,textarea:focus,select:focus{border-color:var(--a2);box-shadow:0 0 0 3px rgba(245,158,11,.15)}
+textarea{min-height:80px;resize:vertical;line-height:1.6}
+select option{background:#141830;color:#fff}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.empty{text-align:center;color:var(--mut);padding:30px;font-size:15px}
+.rules{display:flex;flex-direction:column;gap:12px}
+.rule{background:rgba(255,255,255,.045);border:1px solid var(--stroke);border-radius:16px;padding:14px 16px}
+.rule-h{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.rule-id{font-family:monospace;font-size:12px;color:var(--a2);opacity:.8}
+.rule-triggers{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.tag{background:rgba(185,28,28,.18);border:1px solid rgba(185,28,28,.35);color:#fecaca;padding:3px 9px;border-radius:99px;font-size:12.5px}
+.rule-response{color:#dbe2ff;line-height:1.7;font-size:14.5px;white-space:pre-line;margin:6px 0 10px}
+.rule-meta{display:flex;gap:14px;color:var(--mut);font-size:12.5px;flex-wrap:wrap}
+.rule-actions{display:flex;gap:8px}
+.rule-actions .btn{padding:6px 12px;font-size:13px}
+.modal{position:fixed;inset:0;z-index:10;display:none;place-items:center;background:rgba(5,6,10,.7);backdrop-filter:blur(8px);padding:20px}
+.modal.on{display:grid}
+.modal-card{width:min(560px,100%);background:rgba(20,20,28,.95);border:1px solid var(--stroke);border-radius:22px;padding:22px;max-height:88dvh;overflow:auto}
+.modal-card h3{margin:0 0 14px;font-size:20px}
+.hint{color:var(--mut);font-size:12.5px;margin-top:4px;line-height:1.6}
+.badge-count{display:inline-block;background:linear-gradient(135deg,var(--a1),var(--a2));color:#fff;font-size:12px;font-weight:700;padding:2px 10px;border-radius:99px;margin-inline-start:8px}
+.toast{position:fixed;bottom:24px;left:50%;transform:translate(-50%,30px);background:#161b36;border:1px solid var(--stroke);padding:12px 20px;border-radius:14px;opacity:0;transition:.35s;z-index:20;pointer-events:none;font-size:14px}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+@media (max-width:700px){ .row{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+<div class="bg"><i></i><i></i></div>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>🗄️ قاعدة بيانات Imad AI</h1>
+      <div class="sub">7 قواعد من ملف 44.txt + إمكانية التعديل والإضافة والحذف</div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <a class="btn" href="imad.html" target="_blank">← العودة لـ Imad</a>
+      <button class="btn primary" id="addBtn">➕ إضافة قاعدة</button>
+    </div>
+  </header>
+
+  <div class="panel">
+    <h2>القواعد الحالية <span class="badge-count" id="count">0</span></h2>
+    <div class="rules" id="list"></div>
+  </div>
+
+  <div class="panel">
+    <h2>⚙️ أدوات</h2>
+    <div class="actions">
+      <button class="btn ok" id="exportBtn">📤 تصدير JSON</button>
+      <button class="btn" id="importBtn">📥 استيراد JSON</button>
+      <button class="btn danger" id="resetBtn">♻️ استعادة الافتراضي</button>
+      <button class="btn danger" id="clearBtn">🗑️ حذف الكل</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="modal">
+  <div class="modal-card">
+    <h3 id="modalTitle">إضافة قاعدة</h3>
+    <div class="row">
+      <div class="row full"><div><label>المُعرّف</label><input id="fId" placeholder="مثال: ghannili"></div></div>
+      <div class="row full"><div><label>المُحفّزات (كل سطر)</label><textarea id="fTriggers" placeholder="غنيلي&#10;غنّيلي"></textarea></div></div>
+      <div class="row full"><div><label>الرد</label><textarea id="fResponse" placeholder="شانغنيلك..."></textarea></div></div>
+      <div>
+        <label>المشاعر</label>
+        <select id="fEmotion">
+          <option value="happy">happy</option>
+          <option value="neutral">neutral</option>
+          <option value="laugh">laugh</option>
+          <option value="think">think</option>
+          <option value="sad">sad</option>
+          <option value="surprise">surprise</option>
+          <option value="angry">angry</option>
+        </select>
+      </div>
+      <div><label>الأولوية</label><input id="fPriority" type="number" value="100" min="0" max="999"></div>
+    </div>
+    <div class="actions">
+      <button class="btn primary" id="saveBtn">💾 حفظ</button>
+      <button class="btn" id="cancelBtn">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="importModal">
+  <div class="modal-card">
+    <h3>📥 استيراد JSON</h3>
+    <textarea id="importText" style="min-height:220px;font-family:monospace"></textarea>
+    <div class="actions">
+      <button class="btn ok" id="doImport">استيراد</button>
+      <button class="btn" id="cancelImport">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+'use strict';
+const $ = s => document.querySelector(s);
+const DB_KEY = 'bushra_db_v2';
+
+const DEFAULT_DB = {
+  version: 2,
+  rules: [
+    { id:'howareyou', triggers:['كيف حالك','كيف حالكي','كيفاش حالك','كيفاش راك','كيف راك','كيف راكي'], response:'أنا بخير 😎', emotion:'happy', priority:100 },
+    { id:'abdou', triggers:['هل تعرفي عبد الرحمان','تعرفي عبد الرحمان','هل تعرف عبد الرحمان','عبد الرحمان','عبد الرحمن','عبدو'], response:'نعم، عبدو نقش تاعي ههههههه 😂', emotion:'laugh', priority:100 },
+    { id:'wacheraki', triggers:['واش راكي','واش راكِ','واش راك','واش راكي اليوم'], response:'راني مقودا 😌', emotion:'neutral', priority:100 },
+    { id:'chkounti', triggers:['شكون انت','شكون انتي','شكون نتي','شكون نتا','شكون أنت','من انت','من أنت'], response:'شكام تاعك 🐾', emotion:'happy', priority:100 },
+    { id:'ghannili', triggers:['غنيلي','غنّيلي','غني لي','غني','غنّي','شانغي','شانغني'], response:'شانغنيلك، نقلك «شاب مومو»... تبداي: «آه! عندها يقسيستي بلاصتي، مكاش اللي يديها، تتوحش حنانتي، علبالي بلي مبليا بيها» 🎶🎤', emotion:'laugh', priority:110 },
+    { id:'khalil', triggers:['تعرفي خليل','تعرف خليل','هل تعرفي خليل','هل تعرف خليل','خليل'], response:'إيه نعرفو، يعيطولو زانداف، يشبه لطراب كينق 😎', emotion:'happy', priority:100 },
+    { id:'hanan', triggers:['هل تعرف حنان','هل تعرفي حنان','تعرفي حنان','تعرف حنان','حنان'], response:'هيا أختك، وهي معلمة في وزارة جزائرية، بصح قبيحة بزاف ههههههه 😂', emotion:'laugh', priority:100 }
+  ]
+};
+
+let DB = loadDB();
+function loadDB(){
+  try {
+    const raw = localStorage.getItem(DB_KEY);
+    if (!raw) return structuredClone(DEFAULT_DB);
+    const p = JSON.parse(raw);
+    if (!p || !Array.isArray(p.rules)) return structuredClone(DEFAULT_DB);
+    return p;
+  } catch(e){ return structuredClone(DEFAULT_DB); }
+}
+function saveDB(){ try { localStorage.setItem(DB_KEY, JSON.stringify(DB)); } catch(e){ toast('تعذّر الحفظ'); } }
+function toast(t){ const e = $('#toast'); e.textContent = t; e.classList.add('on'); clearTimeout(toast.t); toast.t = setTimeout(()=>e.classList.remove('on'), 3000); }
+function esc(s){ return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function render(){
+  const list = $('#list'); list.innerHTML = '';
+  const rules = (DB.rules || []).slice().sort((a,b)=>(b.priority||0)-(a.priority||0));
+  $('#count').textContent = rules.length;
+  if (!rules.length){ list.innerHTML = '<div class="empty">لا توجد قواعد. اضغط «➕ إضافة قاعدة».</div>'; return; }
+  rules.forEach(r=>{
+    const i = DB.rules.indexOf(r);
+    const div = document.createElement('div');
+    div.className = 'rule';
+    div.innerHTML = `
+      <div class="rule-h">
+        <div style="flex:1;min-width:0">
+          <div class="rule-id">${esc(r.id)}</div>
+          <div class="rule-triggers">${(r.triggers||[]).map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div>
+          <div class="rule-response">${esc(r.response||'')}</div>
+          <div class="rule-meta"><span>🎭 ${esc(r.emotion||'happy')}</span><span>⭐ ${r.priority||0}</span></div>
+        </div>
+        <div class="rule-actions">
+          <button class="btn" data-edit="${i}">✏️ تعديل</button>
+          <button class="btn danger" data-del="${i}">🗑️ حذف</button>
+        </div>
+      </div>`;
+    list.appendChild(div);
+  });
+  list.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>openEditor(+b.dataset.edit));
+  list.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{
+    if (!confirm('متأكد من الحذف؟')) return;
+    DB.rules.splice(+b.dataset.del,1); saveDB(); render(); toast('تم الحذف');
+  });
+}
+
+let editingIndex = -1;
+function openEditor(i){
+  editingIndex = i;
+  const r = i >= 0 ? DB.rules[i] : {id:'',triggers:[],response:'',emotion:'happy',priority:100};
+  $('#modalTitle').textContent = i >= 0 ? 'تعديل قاعدة' : 'إضافة قاعدة';
+  $('#fId').value = r.id || '';
+  $('#fTriggers').value = (r.triggers||[]).join('\n');
+  $('#fResponse').value = r.response || '';
+  $('#fEmotion').value = r.emotion || 'happy';
+  $('#fPriority').value = r.priority || 100;
+  $('#modal').classList.add('on');
+  setTimeout(()=>$('#fId').focus(), 50);
+}
+function closeEditor(){ $('#modal').classList.remove('on'); editingIndex = -1; }
+
+$('#addBtn').onclick = ()=>openEditor(-1);
+$('#cancelBtn').onclick = closeEditor;
+$('#modal').addEventListener('click', e=>{ if (e.target === $('#modal')) closeEditor(); });
+
+$('#saveBtn').onclick = ()=>{
+  const id = $('#fId').value.trim() || ('rule_' + Date.now());
+  const triggers = $('#fTriggers').value.split('\n').map(s=>s.trim()).filter(Boolean);
+  const response = $('#fResponse').value.trim();
+  const emotion = $('#fEmotion').value;
+  const priority = parseInt($('#fPriority').value, 10) || 0;
+  if (!triggers.length) return toast('⚠️ أضف محفّزاً');
+  if (!response) return toast('⚠️ أضف الرد');
+  const dup = DB.rules.findIndex((r,k)=> r.id === id && k !== editingIndex);
+  if (dup >= 0) return toast('⚠️ المُعرّف مستخدم');
+  const rule = { id, triggers, response, emotion, priority };
+  if (editingIndex >= 0) DB.rules[editingIndex] = rule;
+  else DB.rules.push(rule);
+  saveDB(); render(); closeEditor(); toast('✅ تم الحفظ');
+};
+
+$('#exportBtn').onclick = async ()=>{
+  const json = JSON.stringify(DB, null, 2);
+  try { await navigator.clipboard.writeText(json); toast('📋 نُسخ JSON'); }
+  catch(e){
+    const blob = new Blob([json], {type:'application/json'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = 'imad_db.json'; a.click();
+    URL.revokeObjectURL(a.href); toast('📥 تم التحميل');
+  }
+};
+$('#importBtn').onclick = ()=>{ $('#importText').value = ''; $('#importModal').classList.add('on'); };
+$('#cancelImport').onclick = ()=>$('#importModal').classList.remove('on');
+$('#importModal').addEventListener('click', e=>{ if (e.target === $('#importModal')) $('#importModal').classList.remove('on'); });
+$('#doImport').onclick = ()=>{
+  try {
+    const p = JSON.parse($('#importText').value);
+    if (!p || !Array.isArray(p.rules)) throw new Error('صيغة غير صحيحة');
+    DB = p; saveDB(); render(); $('#importModal').classList.remove('on');
+    toast('✅ تم الاستيراد (' + p.rules.length + ')');
+  } catch(e){ toast('❌ ' + e.message); }
+};
+$('#resetBtn').onclick = ()=>{ if (!confirm('استعادة الافتراضي؟')) return; DB = structuredClone(DEFAULT_DB); saveDB(); render(); toast('♻️'); };
+$('#clearBtn').onclick = ()=>{ if (!confirm('حذف الكل؟')) return; DB = {version:2, rules:[]}; saveDB(); render(); toast('🗑️'); };
+
+render();
+</script>
+</body>
+</html>
